@@ -5,6 +5,7 @@ import os
 import re
 import hashlib
 
+
 def convert_md_to_html(input_file, output_file):
     """Converts a Markdown file to an HTML file."""
     try:
@@ -55,8 +56,10 @@ def convert_md_to_html(input_file, output_file):
                     paragraph_lines.clear()
             else:
                 # Convert [[text]] to MD5 and ((text)) to remove 'c'
-                line = re.sub(r'\[\[(.*?)\]\]', lambda match: md5_hash(match.group(1)), line)
-                line = re.sub(r'\(\((.*?)\)\)', lambda match: remove_char(match.group(1), 'c'), line)
+                line = (re.sub(r'\[\[(.*?)\]\]',
+                    lambda match: md5_hash(match.group(1)), line))
+                line = (re.sub(r'\(\((.*?)\)\)',
+                    lambda match: remove_char(match.group(1), 'c'), line))
                 paragraph_lines.append(line)
 
         # Handle any remaining paragraph lines
@@ -75,19 +78,23 @@ def convert_md_to_html(input_file, output_file):
         print(f"Missing {input_file}", file=sys.stderr)
         sys.exit(1)
 
+
 def convert_text_formatting(text):
     """Convert Markdown bold and emphasis syntax to HTML."""
     text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)  # Bold
     text = re.sub(r'__(.+?)__', r'<em>\1</em>', text)    # Emphasis
     return text
 
+
 def md5_hash(text):
     """Convert the input text to its MD5 hash in lowercase."""
     return hashlib.md5(text.encode()).hexdigest()
 
+
 def remove_char(text, char):
     """Remove all occurrences of a specified character from the text."""
     return text.replace(char, '').replace(char.upper(), '')
+
 
 def create_paragraph(lines):
     """Creates a paragraph from a list of lines."""
@@ -98,12 +105,14 @@ def create_paragraph(lines):
     paragraph_text = convert_text_formatting(paragraph_text)
     return f"<p>{paragraph_text}</p>"
 
+
 def close_open_list(html_content, current_list):
     """Close the open list if needed."""
     if current_list == "ul":
         html_content.append("</ul>")
     elif current_list == "ol":
         html_content.append("</ol>")
+
 
 def main():
     # Check if the correct number of arguments is passed
@@ -121,6 +130,7 @@ def main():
 
     # Call the conversion function
     convert_md_to_html(markdown_file, output_file)
+
 
 if __name__ == "__main__":
     main()
